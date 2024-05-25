@@ -4,11 +4,12 @@
 echo "What would you like to do?"
 echo "1. Create a backup"
 echo "2. Restore data from a backup"
-read -p "Enter your choice [1-2]: " choice
+echo "3. Backup ProjectTools"
+read -p "Enter your choice [1-3]: " choice
 
 # Validate the user's choice
-if [[ $choice -lt 1 || $choice -gt 2 ]]; then
-  echo "Invalid choice. Please enter a number between 1 and 2."
+if [[ $choice -lt 1 || $choice -gt 3 ]]; then
+  echo "Invalid choice. Please enter a number between 1 and 3."
   exit 1
 fi
 
@@ -94,4 +95,47 @@ if [ $choice -eq 2 ]; then
   apt-get install -y --no-install-recommends --fix-broken
 
   echo "Data successfully restored from backup at $backup_path"
+fi
+
+# Backup ProjectTools
+if [ $choice -eq 3 ]; then
+  echo "What ProjectTool would you like to backup?"
+  echo "1. PostgreSQL"
+  echo "2. Visual Studio Code"
+  echo "3. Nginx"
+  echo "4. SSH"
+  read -p "Enter your choice [1-4]: " project_tool
+
+  case $project_tool in
+    1)
+      echo "Enter the path to the PostgreSQL data directory:"
+      read -p "Path: " postgresql_data_dir
+
+      # Backup the PostgreSQL data directory
+      rsync -av --delete "$postgresql_data_dir" "$backup_path/postgresql"
+      ;;
+    2)
+      echo "Enter the path to the Visual Studio Code settings directory:"
+      read -p "Path: " vscode_settings_dir
+
+      # Backup the Visual Studio Code settings directory
+      rsync -av --delete "$vscode_settings_dir" "$backup_path/vscode"
+      ;;
+    3)
+      echo "Enter the path to the Nginx configuration directory:"
+      read -p "Path: " nginx_config_dir
+
+      # Backup the Nginx configuration directory
+      rsync -av --delete "$nginx_config_dir" "$backup_path/nginx"
+      ;;
+    4)
+      echo "Enter the path to the SSH configuration directory:"
+      read -p "Path: " ssh_config_dir
+
+      # Backup the SSH configuration directory
+      rsync -av --delete "$ssh_config_dir" "$backup_path/ssh"
+      ;;
+  esac
+
+  echo "ProjectTool successfully backed up at $backup_path"
 fi
